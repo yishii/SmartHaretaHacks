@@ -8,7 +8,7 @@ static uint8_t framebuffer[24 * 24 / 8];
 #define FB_SIZE_X 24
 #define FB_SIZE_Y 24
 
-static uint8_t characters[4][32] =
+static const uint8_t characters[4][32] =
 {
   {
     0xff, 0xff, 0xfc, 0x1f, 0xe3, 0xe3, 0xdf, 0xfb, 0xdf, 0xfd, 0xbf, 0xad,
@@ -32,7 +32,7 @@ static uint8_t characters[4][32] =
   }
 };
 
-void bitBlt(uint8_t* pix, int ox, int oy, size_t sx, size_t sy)
+void bitBlt(const uint8_t* pix, int ox, int oy, size_t sx, size_t sy)
 {
   int x, y;
   for (y = 0; y < sy; y++) {
