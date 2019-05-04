@@ -44,11 +44,13 @@ void sendToDriver(uint8_t addr)
   Wire.beginTransmission(addr);
   Wire.write(0x00);
   for (int i = 0; i < 8; i++) {
+    // First 8x8 Area
+    Wire.write(0xff);
+
+    // Second 8x8 Area
     if(i & 1){
-      Wire.write(0xff);
       Wire.write(0xaa);
     } else {
-      Wire.write(0x00);
       Wire.write(0x55);
     }
   }
@@ -60,7 +62,7 @@ void setup()
   uint8_t a;
 
   Wire.begin(25, 26);
-  Wire.setClock(200000L);
+  Wire.setClock(100000);
   
   setupDriver();
 
