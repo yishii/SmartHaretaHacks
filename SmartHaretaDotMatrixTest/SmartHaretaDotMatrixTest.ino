@@ -4,9 +4,9 @@
 
 #include <Wire.h>
 
-static uint8_t framebuffer[24 * 24 / 8];
 #define FB_SIZE_X 24
 #define FB_SIZE_Y 24
+static uint8_t framebuffer[FB_SIZE_X * FB_SIZE_Y / 8];
 
 static const uint8_t characters[4][32] =
 {
@@ -127,6 +127,35 @@ void setupDriver(void)
   }
 }
 
+static void initializeLedDriver(uint8_t addr)
+{
+  /**
+     System Setup Register : Turn on system oscillator
+  */
+  Wire.beginTransmission(addr);
+  Wire.write(0x21);
+  Wire.endTransmission();
+
+  /**
+     Display Setup Register
+  */
+  Wire.beginTransmission(addr);
+  Wire.write(0x81);
+  Wire.endTransmission();
+
+  /**
+     Digital Dimming Data Input (LED Duty configuration)
+  */
+  {
+    uint8_t brightness = 10; /* 0 - 15 */
+    Wire.beginTransmission(addr);
+    Wire.write(0xe0 | brightness);
+    Wire.endTransmission();
+  }
+}
+
+/**************************************************************************/
+
 void setup()
 {
   Wire.begin(25, 26);
@@ -140,12 +169,8 @@ void setup()
 
 void draw_floor(int c)
 {
-  int x;
+  int x, y;
   int s = 0;
-  bool f;
-  int y;
-
-  y = 22;
 
   for (x = 0; x < 24; x++) {
     if (((c + s) % 4) == 0) {
@@ -191,31 +216,4 @@ void loop() {
   updateLed();
 
   demo();
-}
-
-static void initializeLedDriver(uint8_t addr)
-{
-  /**
-     System Setup Register : Turn on system oscillator
-  */
-  Wire.beginTransmission(addr);
-  Wire.write(0x21);
-  Wire.endTransmission();
-
-  /**
-     Display Setup Register
-  */
-  Wire.beginTransmission(addr);
-  Wire.write(0x81);
-  Wire.endTransmission();
-
-  /**
-     Digital Dimming Data Input (LED Duty configuration)
-  */
-  {
-    uint8_t brightness = 10; /* 0 - 15 */
-    Wire.beginTransmission(addr);
-    Wire.write(0xe0 | brightness);
-    Wire.endTransmission();
-  }
 }
